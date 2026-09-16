@@ -1,15 +1,10 @@
-kt = 0 # Не совсем понял условие. Откуда должны приходить данные о людях, заранее или после ввода числа? Поэтому закинул в цикл.
-kf = 0
-data = []
-n = int(input("Число для регистрации: ")) 
-for x in range(n):
-    a = input('Введи ФИО и возраст: ')
-    b = input("Формат обучения: ")
-    if b == 'Очно': b = True; kt +=1
-    else: b = False; kf +=1
-    i = a+str(b)
-    data.append(i)
-print(f"Количество участников: {n}")
-for x in data:
-    print(x)
-print(f'out: {kt} {kf}')
+t = 0
+f = 0
+a = int(input('in_1: '))
+for x in range(a):
+    a2 = input(f'in_{x+2}: ').split()
+    if a2[3] == 'True':
+        t+=1
+    else:
+        f+=1
+print(f'out: {t} {f}')
