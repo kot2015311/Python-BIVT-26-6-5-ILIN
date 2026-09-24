@@ -17,4 +17,5 @@ r = c-d
 
 for x in range(23,len(a),r):
     b += b.join(a[x])
+
 print(f'out: {b}')
