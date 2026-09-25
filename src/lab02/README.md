@@ -129,6 +129,8 @@ print('[[1,2],[3]] -> ',col_sums([[1, 2], [3]]))
 # Задание 7 Форма
 ```py
 def format_record(rec: tuple[str, str, float]) -> str:
+    if type(rec) != tuple: #Проверка на кортеж 
+        raise TypeError("Входные данные должны быть кортежем")
     gpa = round(rec[2],2)
     if not (0.0 <= gpa <= 5.0):
         raise ValueError("GPA должен быть в диапазоне от 0.0 до 5.0")
