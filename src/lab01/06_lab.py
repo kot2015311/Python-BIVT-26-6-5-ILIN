@@ -9,6 +9,6 @@ for x in range(a):
         else:
             f+=1
     else:
-        break
+        print('Неверный ввод')
     
 print(f'out: {t} {f}')
