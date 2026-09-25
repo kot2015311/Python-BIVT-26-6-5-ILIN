@@ -10,7 +10,7 @@ def min_max(nums: list[float | int]) -> tuple[float | int, float | int]:
     for num in nums:
         if num > max_num: max_num = num # Проверка по числам
         if num < min_num: min_num = num
-    return (min(nums), max(nums))
+    return (min_num, max_num)
 
 print('[3, -1, 5, 5, 0] -> ',min_max([3, -1, 5, 5, 0]))
 print('[42] -> ',min_max([42]))
