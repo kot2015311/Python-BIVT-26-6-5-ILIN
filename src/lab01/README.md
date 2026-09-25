@@ -69,7 +69,7 @@ for x in range(a):
     
 print(f'out: {t} {f}')
 ```
-![alt text](../../images/lab01/05_initials_and_len.png)
+![alt text](../../images/lab01/06_lab.png)
 
 
 ### 7 Задание
