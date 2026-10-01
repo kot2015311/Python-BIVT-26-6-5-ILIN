@@ -6,19 +6,20 @@ def format_record(rec: tuple[str, str, float]) -> str:
     gpa = round(rec[2],2) # Проверка на гпа
     if not (0.0 <= gpa <= 5.0):
         raise ValueError("GPA должен быть в диапазоне от 0.0 до 5.0")
+
+    if type(gpa) != float:
+        raise TypeError("Неправильный тип ввода данных")
     
     fio = rec[0].split() # Проверка на имя
     if len(fio) == 0:
-        raise ValueError('Напиши имя')
+        raise ValueError('ФИО должно быть написано')
     
-    if len(gr) == 0: # Поверка на группу
-        raise ValueError('Напиши группу')
+    if len(rec[1]) == 0: # Поверка на группу
+        raise ValueError('Группа должна быть написана')
     
-    if len(rec) < 3: # Недополнение
-        raise ValueError("Неполный формат входных данных")
+    if len(rec) != 3: # Недополнение
+        raise ValueError("Неточный формат входных данных")
     
-    if len(rec) > 3: # Переполнение
-        raise IndexError("Слишком много входных данных")
     
     name = fio[0].lower() # Имя с строчных букв
     gr = rec[1]
@@ -37,6 +38,3 @@ print('("Петров Пётр Петрович", "IKBO-12", 5.0) -> ',format_re
 print('("  сидорова  анна   сергеевна ", "ABB-01", 3.999) -> ',format_record(("  сидорова  анна   сергеевна ", "ABB-01", 3.999)))
 # print(format_record(("  ", "ABB-01", 3.999)))
 # print(format_record(("фыв  фыв фыв", "", 3.999)))
-
-
-
