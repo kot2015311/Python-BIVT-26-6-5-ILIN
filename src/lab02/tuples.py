@@ -1,38 +1,51 @@
 def format_record(rec: tuple[str, str, float]) -> str:
     
-    if type(rec) != tuple: #Проверка на кортеж 
-        raise TypeError("Входные данные должны быть кортежем")
+    if type(rec) is not tuple:
+        raise TypeError("Входные данные должны быть кортежем")# Проверка, что входные данные кортеж
     
-    gpa = round(rec[2],2) # Проверка на гпа
+    
+    if len(rec) != 3:
+        raise ValueError("Неточный формат входных данных")# Проверка длины кортежа
+    
+    fio = rec[0]
+    group = rec[1]
+    gpa = rec[2]
+    
+    # Проверки типов
+    if type(fio) != str:
+        raise TypeError("ФИО должно быть строкой")
+    
+    if type(group) != str:
+        raise TypeError("Группа должна быть строкой")
+    
+    if type(gpa) not in (int, float):
+        raise TypeError("GPA должен быть числом")
+    
+    gpa = round(gpa, 2)
     if not (0.0 <= gpa <= 5.0):
-        raise ValueError("GPA должен быть в диапазоне от 0.0 до 5.0")
+        raise ValueError("GPA должен быть в диапазоне от 0.0 до 5.0")# Проверка диапазона GPA
+    
+    fio = fio.split()
+    if len(fio) not in (2, 3):
+        raise ValueError("Неверный ввод ФИО")
+    
+    
+    if not group.strip():
+        raise ValueError("Группа должна быть написана")# Проверка группы
+    
+    # Формирование ФИО с инициалами
+    
+    f_name = fio[0].capitalize() # Фамилия с большой буквы
+    initials = ''
+    for i in fio[1:]:
+        initials+=i[0].upper()+'.'
+    fio = f_name + ' ' + initials
+    return f"{fio}, гр. {group.strip()}, GPA {gpa:.2f}"
 
-    if type(gpa) != float:
-        raise TypeError("Неправильный тип ввода данных")
-    
-    fio = rec[0].split() # Проверка на имя
-    if len(fio) == 0:
-        raise ValueError('ФИО должно быть написано')
-    
-    if len(rec[1]) == 0: # Поверка на группу
-        raise ValueError('Группа должна быть написана')
-    
-    if len(rec) != 3: # Недополнение
-        raise ValueError("Неточный формат входных данных")
-    
-    
-    name = fio[0].lower() # Имя с строчных букв
-    gr = rec[1]
 
-    
-    if len(fio)== 3: 
-        fio1 = f'{name[0].upper()+name[1:]} {fio[1][0].upper()}. {fio[2][0].upper()}.' # Сбор ФИО+группы+гпа
-    else: 
-        fio1 = f'{name[0].upper()+name[1:]} {fio[1][0].upper()}.' # Если неполное фио
-    fio1 = f'{fio1.strip()}, гр. {gr.strip()}, GPA {gpa:.2f}'
-    return fio1
-
-print('("Иванов Иван Иванович", "BIVT-25", 4.6) -> ',format_record(("   Иванов Иван Иванович", "    BIVT-25",           4.6)))
-print('("Петров Пётр", "IKBO-12", 5.0) -> ',format_record(("   Петров Пётр", "IKBO-12", 5.0)))
-print('("Петров Пётр Петрович", "IKBO-12", 5.0) -> ',format_record(("Петров Пётр Петрович", "IKBO-12   ", 5.0)))
-print('("  сидорова  анна   сергеевна ", "ABB-01", 3.999) -> ',format_record(("  сидорова  анна   сергеевна ", "ABB-01", 3.999)))
+# Тесты
+print('("Иванов Иван Иванович", "BIVT-25", 4.6) -> ', format_record(("   Иванов Иван Иванович", "    BIVT-25", 4.6)))
+print('("Петров Пётр", "IKBO-12", 5.0) -> ', format_record(("   Петров Пётр", "IKBO-12", 5.0)))
+print('("Петров Пётр Петрович", "IKBO-12", 5.0) -> ', format_record(("Петров Пётр Петрович", "IKBO-12   ", 5.0)))
+print('("  сидорова  анна   сергеевна ", "ABB-01", 3.999) -> ', format_record(("  сидорова  анна   сергеевна ", "ABB-01", 3.999)))
+print('("Иванов Иван", "BIVT-25", 5) -> ', format_record(("Иванов Иван", "BIVT-25", 5))) 
