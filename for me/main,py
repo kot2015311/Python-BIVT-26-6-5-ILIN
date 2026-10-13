@@ -1,16 +1,14 @@
-# print('["a","b","a","c","b","a"] →',count_freq(["a","b","a","c","b","a"]))
-# print('["bb","aa","bb","aa","cc"] →', count_freq(["bb","aa","bb","aa","cc"]))
-def top_n(freq: dict[str, int], n: int = 5) -> list[tuple[str, int]]:
-    
-    if type(freq) != dict:
-        raise ValueError('Неправильный ввод данных')
-    
-    if len(freq) == 0:
-        raise ValueError('Словарь пуст')
+from PYTHON-BIVT-26-6-5-ILIN.src.lib.text import count_freq, normalize, tokenize, top_n
 
-    if n == 0:
-        raise ValueError('Нет слов')
-
-    result = list(freq.items())
-
-    return sorted(result, key=lambda p: (-p[1],p[0]))[:n]
+assert normalize("ПрИвЕт\nМИр\t") == "привет мир"
+assert normalize("ёжик, Ёлка") == "ежик, елка"
+assert normalize("Hello\r\nWorld") == "hello world"
+assert tokenize("по-настоящему foo_bar 2025 😀") == [
+    "по-настоящему", "foo_bar", "2025"
+]
+assert count_freq(["a", "b", "a", "c", "b", "a"]) == {
+    "a": 3, "b": 2, "c": 1
+}
+assert top_n({"bb": 2, "aa": 2, "cc": 1}, 2) == [
+    ("aa", 2), ("bb", 2)
+]

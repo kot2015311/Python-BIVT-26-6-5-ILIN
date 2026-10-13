@@ -1,0 +1,14 @@
+from src.lib.text import count_freq, normalize, tokenize, top_n
+
+assert normalize("ПрИвЕт\nМИр\t") == "привет мир"
+assert normalize("ёжик, Ёлка") == "ежик, елка"
+assert normalize("Hello\r\nWorld") == "hello world"
+assert tokenize("по-настоящему foo_bar 2025 😀") == [
+    "по-настоящему", "foo_bar", "2025"
+]
+assert count_freq(["a", "b", "a", "c", "b", "a"]) == {
+    "a": 3, "b": 2, "c": 1
+}
+assert top_n({"bb": 2, "aa": 2, "cc": 1}, 2) == [
+    ("aa", 2), ("bb", 2)
+]
