@@ -6,17 +6,20 @@ def normalize(text: str, *, casefold: bool = True, yo2e: bool = True) -> str:
         raise TypeError("Текст должен быть строкой") # Проверка 
     
     if len(text.strip()) == 0:
-        raise ValueError('Пустое значение') # Проверка 
+        return ''
+        # raise ValueError('Пустое значение') # Проверка 
     
     result = text # Переменная под результат
+    if yo2e:
+        result = result.replace('ё','е') # Замена регистра и букв е/ё
+        result = result.replace('Ё','Е')
+    
     if casefold:
         result = result.casefold() # Убираем знаки, которых нет в питоне, доводим до маленького регистра
     else:
         result = result.lower() 
     
-    if yo2e:
-        result = result.replace('ё','е') # Замена регистра и букв е/ё
-        result = result.replace('Ё','Е')
+    
     
     result = result.replace('\t',' ') # Заменяем все ненужные знаки и буквы на пробелы
     result = result.replace('\r',' ')
@@ -32,6 +35,7 @@ def normalize(text: str, *, casefold: bool = True, yo2e: bool = True) -> str:
 # 2
 
 def tokenize(text: str) -> list[str]:
+    
     if type(text)!= str:
         raise TypeError("Текст должен быть строкой") # Проверка 
     
@@ -50,11 +54,12 @@ def count_freq(tokens: list[str]) -> dict[str, int]:
         raise TypeError('Нужен список слов') # Проверка 
     
     if len(tokens) == 0:
-        raise ValueError('Список пустой') # Проверка 
+        return {}
+        # raise ValueError('Список пустой') # Проверка 
 
     result = {} 
     for word in tokens:
-        result[word] = tokens.count(word) # Записываем в словарь сколько раз встречается конкретное слово
+        result[word] = result.count(word) # Записываем в словарь сколько раз встречается конкретное слово
 
     return result
 
@@ -64,12 +69,13 @@ def count_freq(tokens: list[str]) -> dict[str, int]:
 def top_n(freq: dict[str, int], n: int = 5) -> list[tuple[str, int]]:
     
     if type(freq) != dict:
-        raise ValueError('Неправильный ввод данных') # Проверка 
+        raise TypeError('Неправильный ввод данных') # Проверка 
     
     if len(freq) == 0:
-        raise ValueError('Словарь пуст') # Проверка 
+        return []
+        # raise ValueError('Словарь пуст') # Проверка 
 
-    if n == 0:
+    if n < 0:
         raise ValueError('Нет слов') # Проверка 
 
     result = list(freq.items()) # Создаем список из ключей и их слов
