@@ -36,6 +36,7 @@ print('ёжик, Ёлка -> ', normalize("ёжик, Ёлка"))
 print('Hello\\r\\nWorld -> ', normalize("Hello\r\nWorld"))
 print('  двойные   пробелы   -> ', normalize("  двойные   пробелы  "))
 ```
+### Вывод
 ![alt text](../../images/lab03/normalize.png)
 
 ### tokenize
@@ -56,6 +57,7 @@ print('по-настоящему круто -> ', tokenize("по-настоящ�
 print('2025 год -> ', tokenize("2025 год"))
 print('emoji 😀 не слово -> ', tokenize("emoji 😀 не слово"))
 ```
+### Вывод
 ![alt text](../../images/lab03/tokenize.png)
 
 ### Count_freq
@@ -76,6 +78,7 @@ def count_freq(tokens: list[str]) -> dict[str, int]:
 print('["a","b","a","c","b","a"] -> ', count_freq(["a", "b", "a", "c", "b", "a"]))
 print('["bb","aa","bb","aa","cc"] -> ', count_freq(["bb", "aa", "bb", "aa", "cc"]))
 ```
+### Вывод
 ![alt text](Count_freq.png)
 
 ### Top_n
@@ -101,4 +104,5 @@ def top_n(freq: dict[str, int], n: int = 5) -> list[tuple[str, int]]:
 print('{"a":3,"b":2,"c":1}, n=2 -> ', top_n({"a": 3, "b": 2, "c": 1}, 2))
 print('{"aa":2,"bb":2,"cc":1}, n=2 -> ', top_n({"aa": 2, "bb": 2, "cc": 1}, 2))
 ```
+### Вывод
 ![alt text](Top_n.png)
