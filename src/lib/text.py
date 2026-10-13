@@ -59,7 +59,7 @@ def count_freq(tokens: list[str]) -> dict[str, int]:
 
     result = {} 
     for word in tokens:
-        result[word] = result.count(word) # Записываем в словарь сколько раз встречается конкретное слово
+        result[word] = result.get(word, 0) + 1 # Записываем в словарь сколько раз встречается конкретное слово
 
     return result
 
