@@ -1,0 +1,16 @@
+# print('["a","b","a","c","b","a"] →',count_freq(["a","b","a","c","b","a"]))
+# print('["bb","aa","bb","aa","cc"] →', count_freq(["bb","aa","bb","aa","cc"]))
+def top_n(freq: dict[str, int], n: int = 5) -> list[tuple[str, int]]:
+    
+    if type(freq) != dict:
+        raise ValueError('Неправильный ввод данных')
+    
+    if len(freq) == 0:
+        raise ValueError('Словарь пуст')
+
+    if n == 0:
+        raise ValueError('Нет слов')
+
+    result = list(freq.items())
+
+    return sorted(result, key=lambda p: (-p[1],p[0]))[:n]
