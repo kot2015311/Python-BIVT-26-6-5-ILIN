@@ -28,10 +28,6 @@ def normalize(text: str, *, casefold: bool = True, yo2e: bool = True) -> str:
     
     return result
 
-print('ПрИвЕт\\nМИр\\t -> ', normalize("ПрИвЕт\nМИр\t"))
-print('ёжик, Ёлка -> ', normalize("ёжик, Ёлка"))
-print('Hello\\r\\nWorld -> ', normalize("Hello\r\nWorld"))
-print('  двойные   пробелы   -> ', normalize("  двойные   пробелы  "))
 
 # 2
 
@@ -45,11 +41,7 @@ def tokenize(text: str) -> list[str]:
 
     return result
 
-print('привет мир -> ', tokenize("привет мир"))
-print('hello,world!!! -> ', tokenize("hello,world!!!"))
-print('по-настоящему круто -> ', tokenize("по-настоящему круто"))
-print('2025 год -> ', tokenize("2025 год"))
-print('emoji 😀 не слово -> ', tokenize("emoji 😀 не слово"))
+
 
 # 3 
 
@@ -66,8 +58,6 @@ def count_freq(tokens: list[str]) -> dict[str, int]:
 
     return result
 
-print('["a","b","a","c","b","a"] -> ', count_freq(["a", "b", "a", "c", "b", "a"]))
-print('["bb","aa","bb","aa","cc"] -> ', count_freq(["bb", "aa", "bb", "aa", "cc"]))
 
 # 4
 
@@ -89,5 +79,3 @@ def top_n(freq: dict[str, int], n: int = 5) -> list[tuple[str, int]]:
     # Кортежи сравниваются по первому элементу, при равенстве — по второму: сначала по убыванию счёта, при равных — по алфавиту.
     # Минус перед счётом — вместо reverse=True, чтобы слова при этом шли по возрастанию[:n] — срез списка пар, первые n
 
-print('{"a":3,"b":2,"c":1}, n=2 -> ', top_n({"a": 3, "b": 2, "c": 1}, 2))
-print('{"aa":2,"bb":2,"cc":1}, n=2 -> ', top_n({"aa": 2, "bb": 2, "cc": 1}, 2))

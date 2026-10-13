@@ -40,10 +40,7 @@ def normalize(text: str, *, casefold: bool = True, yo2e: bool = True) -> str:
     
     return result
 
-print('ПрИвЕт\\nМИр\\t -> ', normalize("ПрИвЕт\nМИр\t"))
-print('ёжик, Ёлка -> ', normalize("ёжик, Ёлка"))
-print('Hello\\r\\nWorld -> ', normalize("Hello\r\nWorld"))
-print('  двойные   пробелы   -> ', normalize("  двойные   пробелы  "))
+
 ```
 Вывод
 
@@ -66,11 +63,7 @@ def tokenize(text: str) -> list[str]:
 
     return result
 
-print('привет мир -> ', tokenize("привет мир"))
-print('hello,world!!! -> ', tokenize("hello,world!!!"))
-print('по-настоящему круто -> ', tokenize("по-настоящему круто"))
-print('2025 год -> ', tokenize("2025 год"))
-print('emoji 😀 не слово -> ', tokenize("emoji 😀 не слово"))
+
 ```
 Вывод
 
@@ -95,8 +88,7 @@ def count_freq(tokens: list[str]) -> dict[str, int]:
 
     return result
 
-print('["a","b","a","c","b","a"] -> ', count_freq(["a", "b", "a", "c", "b", "a"]))
-print('["bb","aa","bb","aa","cc"] -> ', count_freq(["bb", "aa", "bb", "aa", "cc"]))
+
 ```
 Вывод
 
@@ -128,9 +120,61 @@ def top_n(freq: dict[str, int], n: int = 5) -> list[tuple[str, int]]:
     # Кортежи сравниваются по первому элементу, при равенстве — по второму: сначала по убыванию счёта, при равных — по алфавиту.
     # Минус перед счётом — вместо reverse=True, чтобы слова при этом шли по возрастанию[:n] — срез списка пар, первые n
 
-print('{"a":3,"b":2,"c":1}, n=2 -> ', top_n({"a": 3, "b": 2, "c": 1}, 2))
-print('{"aa":2,"bb":2,"cc":1}, n=2 -> ', top_n({"aa": 2, "bb": 2, "cc": 1}, 2))
 ```
 Вывод
 
 ![alt text](../../images/lab03/Top_n.png)
+
+### Проверка через assert
+```py
+from src.lib.text import count_freq, normalize, tokenize, top_n
+
+assert normalize("ПрИвЕт\nМИр\t") == "привет мир", "Ошибка в normalize (регистр/пробелы)"
+assert normalize("ёжик, Ёлка") == "ежик, елка", "Ошибка в normalize (замена ё/е)"
+assert normalize("Hello\r\nWorld") == "hello world", "Ошибка в normalize (управляющие символы)"
+assert normalize("  двойные   пробелы  ") == "двойные пробелы", "Ошибка в normalize (схлопывание пробелов)"
+
+assert tokenize("привет мир") == ["привет", "мир"], "Ошибка в tokenize (обычные слова)"
+assert tokenize("hello,world!!!") == ["hello", "world"], "Ошибка в tokenize (знаки препинания)"
+assert tokenize("по-настоящему круто") == ["по-настоящему", "круто"], "Ошибка в tokenize (дефисы)"
+assert tokenize("2025 год") == ["2025", "год"], "Ошибка в tokenize (числа)"
+assert tokenize("emoji 😀 не слово") == ["emoji", "не", "слово"], "Ошибка в tokenize (эмодзи)"
+
+assert count_freq(["a", "b", "a", "c", "b", "a"]) == {"a": 3, "b": 2, "c": 1}, "Ошибка в count_freq (базовый подсчет)"
+assert count_freq(["bb", "aa", "bb", "aa", "cc"]) == {"bb": 2, "aa": 2, "cc": 1}, "Ошибка в count_freq (порядок ключей)"
+
+assert top_n({"a": 3, "b": 2, "c": 1}, 2) == [("a", 3), ("b", 2)], "Ошибка в top_n (сортировка по убыванию)"
+assert top_n({"aa": 2, "bb": 2, "cc": 1}, 2) == [("aa", 2), ("bb", 2)], "Ошибка в top_n (сортировка по алфавиту при равенстве)"
+
+print("Все проверки успешно пройдены! Функции работают правильно.")
+```
+Вывод
+
+![alt text](../../images/lab03/proverka.png)
+
+## Задание В
+```py
+
+from src.lib.text import normalize, tokenize, top_n, count_freq
+
+def text_stat(text: str):
+    tokens = tokenize(normalize(text))
+    freq = count_freq(tokens)
+    top = top_n(freq)
+
+    print(f"Всего слов: {len(tokens)}")
+    print(f"Уникальных слов: {len(freq)}")
+    print("Топ-5:")
+
+    for word, count in top:
+        print(f"{word}:{count}")
+
+
+text = input()
+text_stat(text)
+
+```
+
+Вывод
+
+![alt text](../../images/lab03/B.png)
