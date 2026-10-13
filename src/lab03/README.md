@@ -1,8 +1,17 @@
 # ЛР3 — Тексты и частоты слов (словарь/множество)
 
+ЦЕЛЬ РАБОТЫ:
+Освоить базовые методы предобработки текстовых данных на языке Python.
+
 ## Задание А(функции)
 
 ### Normalize
+
+- Приводит текст к нижнему регистру (или casefold).
+- Опционально заменяет буквы 'ё' на 'е'.
+- Убирает невидимые управляющие символы (табы, переносы строк).
+- Схлопывает повторяющиеся пробелы в один и убирает пробелы по краям.
+
 ```py
 def normalize(text: str, *, casefold: bool = True, yo2e: bool = True) -> str:
     if type(text)!= str:
@@ -36,10 +45,16 @@ print('ёжик, Ёлка -> ', normalize("ёжик, Ёлка"))
 print('Hello\\r\\nWorld -> ', normalize("Hello\r\nWorld"))
 print('  двойные   пробелы   -> ', normalize("  двойные   пробелы  "))
 ```
-### Вывод
+Вывод
+
 ![alt text](../../images/lab03/normalize.png)
 
 ### tokenize
+
+Использует регулярное выражение для поиска последовательностей букв, 
+цифр и подчеркиваний, включая дефисы внутри слов (например, "по-настоящему").
+Эмодзи и знаки препинания игнорируются.
+
 ```py
 def tokenize(text: str) -> list[str]:
     if type(text)!= str:
@@ -57,10 +72,15 @@ print('по-настоящему круто -> ', tokenize("по-настоящ�
 print('2025 год -> ', tokenize("2025 год"))
 print('emoji 😀 не слово -> ', tokenize("emoji 😀 не слово"))
 ```
-### Вывод
+Вывод
+
 ![alt text](../../images/lab03/tokenize.png)
 
 ### Count_freq
+
+Проходит по списку токенов и формирует словарь, где ключом является слово,
+а значением — количество его вхождений в текст.
+
 ```py
 def count_freq(tokens: list[str]) -> dict[str, int]:
     if type(tokens) != list:
@@ -78,10 +98,17 @@ def count_freq(tokens: list[str]) -> dict[str, int]:
 print('["a","b","a","c","b","a"] -> ', count_freq(["a", "b", "a", "c", "b", "a"]))
 print('["bb","aa","bb","aa","cc"] -> ', count_freq(["bb", "aa", "bb", "aa", "cc"]))
 ```
-### Вывод
-![alt text](Count_freq.png)
+Вывод
+
+![alt text](../../images/lab03/Count_freq.png)
 
 ### Top_n
+
+Преобразует словарь частот в список кортежей и сортирует его:
+- По убыванию частоты.
+- При равенстве частот — по алфавиту (возрастанию).
+Возвращает первые N элементов.
+
 ```py
 def top_n(freq: dict[str, int], n: int = 5) -> list[tuple[str, int]]:
     
@@ -104,5 +131,6 @@ def top_n(freq: dict[str, int], n: int = 5) -> list[tuple[str, int]]:
 print('{"a":3,"b":2,"c":1}, n=2 -> ', top_n({"a": 3, "b": 2, "c": 1}, 2))
 print('{"aa":2,"bb":2,"cc":1}, n=2 -> ', top_n({"aa": 2, "bb": 2, "cc": 1}, 2))
 ```
-### Вывод
-![alt text](Top_n.png)
+Вывод
+
+![alt text](../../images/lab03/Top_n.png)
