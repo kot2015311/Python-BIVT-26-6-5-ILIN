@@ -1,6 +1,13 @@
 # ЛР2 — Коллекции и матрицы (list/tuple/set/dict)
 
+## Цели и результат
+- Освоить операции над списками, кортежами, множествами и словарями.
+- Научиться работать с 2D-списками (матрицами) — транспонирование, суммы по строкам/столбцам.
+- Аккуратно форматировать текстовые представления записей (на примере студента).
+---
+
 ## Задание 1 - min_max
+Возвращает кортеж(минимум, максимум)
 ```py
 def min_max(nums: list[float | int]) -> tuple[float | int, float | int]:
     if len(nums) == 0: 
@@ -21,6 +28,9 @@ print('[] -> ',min_max([]))
 ![alt text](../../images/lab02/01.png)
 
 ## Задание 2 - unique_sorted
+
+Возвращает отсортированный список уникальных значений (по возрастанию)
+
 ```py
 
 def unique_sorted(nums: list[float | int]) -> list[float | int]:
@@ -48,6 +58,11 @@ print('[] -> ',unique_sorted([]))
 ![alt text](../../images/lab02/02.png)
 
 ## Задание 3 - flatten
+
+
+Расплющить» список списков/кортежей в один список по строкам
+
+
 ```py
 
 def flatten(mat: list[list | tuple]) -> list:
@@ -68,6 +83,9 @@ print('[[1, 2], ''ab''] -> ',flatten([[1, 2], 'ab']))
 ![alt text](../../images/lab02/03.png)
 
 ## Заданиие 4 - transpose
+
+Поменять строки и столбцы местами. 
+
 ```py
 def transpose(mat: list[list[float | int]]) -> list[list]:
     if not mat: # Обрабатываем пустую матрицу
@@ -96,6 +114,9 @@ print('[[1, 2], [3]] -> ',transpose([[1, 2], [3]]))
 ![alt text](../../images/lab02/04.png)
 
 # Задание 5 - row_sums
+
+Сумма по каждой строке. 
+
 ```py
 def row_sums(mat: list[list[float | int]]) -> list[float]:
     if not mat:
@@ -117,6 +138,9 @@ print('[[1,2],[3]] -> ',row_sums([[1,2],[3]]))
 ![alt text](../../images/lab02/05.png)
 
 # Задание 6 - col_sums
+
+Сумма по каждому столбцу
+
 ```py
 def col_sums(mat: list[list[float | int]]) -> list[float]:
     if not mat:
@@ -139,6 +163,9 @@ print('[[1,2],[3]] -> ',col_sums([[1, 2], [3]]))
 ![alt text](../../images/lab02/06.png)
 
 # Задание 7 Форма
+
+Работаем с «записями» как с кортежами. Вывоидт корректную запись о человеке
+
 ```py
 def format_record(rec: tuple[str, str, float]) -> str:
     
