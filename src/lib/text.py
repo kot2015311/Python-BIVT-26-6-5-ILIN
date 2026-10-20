@@ -19,8 +19,6 @@ def normalize(text: str, *, casefold: bool = True, yo2e: bool = True) -> str:
     else:
         result = result.lower() 
     
-    
-    
     result = result.replace('\t',' ') # Заменяем все ненужные знаки и буквы на пробелы
     result = result.replace('\r',' ')
     result = result.replace('\n',' ')
