@@ -28,8 +28,8 @@ def main() -> None:
     # Аргумент --in: путь к входному файлу. Если не указан, берется data/lab04/input.txt
     parser.add_argument("--in", dest="input_file", default="data/lab04/input.txt", help="Путь к входному файлу")
     
-    # Аргумент --out: путь к выходному CSV. По умолчанию data/report.csv
-    parser.add_argument("--out", dest="output_file", default="data/report.csv", help="Путь к выходному CSV")
+    # Аргумент --out: путь к выходному CSV. По умолчанию data/lab04/report.csv
+    parser.add_argument("--out", dest="output_file", default="data/lab04/report.csv", help="Путь к выходному CSV")
     
     # Аргумент --encoding: кодировка файла. По умолчанию utf-8
     parser.add_argument("--encoding", default="utf-8", help="Кодировка файла (например, cp1251)")

@@ -84,6 +84,7 @@ print(repr(txt)) # repr покажет текст вместе с кавычка
 # repr покажет лишние пробелы и переносы строк, которые иначе не видны.
 ```
 Вывод:
+
 ![alt text](../../images/lab04/input.png)
 
 Содержимое check.csv:
@@ -174,4 +175,5 @@ if __name__ == "__main__":
 python -m src.lab04.text_report
 ```
 Вывод:
+
 ![alt text](../../images/lab04/text_report.png)
