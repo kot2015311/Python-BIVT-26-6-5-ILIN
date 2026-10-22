@@ -7,304 +7,87 @@ tokenize, count_freq, top_n) к реальным файлам.
 
 ## Задание А — модуль `src/lab04/io_txt_csv.py`
 
-Три «кирпича»: чтение текста, запись CSV, создание папок.
-Всё с докстрингами и аннотациями типов.
+Три кирпича: чтение текста, запись CSV, создание папок.
 
-### Read_text
 
-Открывает файл в заданной кодировке и возвращает содержимое одной
-строкой. Ошибки `FileNotFoundError` и `UnicodeDecodeError` не
-перехватываются — пусть вызывающий решает. Для нестандартной
-кодировки её передают явно: `read_text("f.txt", encoding="cp1251")`.
+### read_text()
+```py
+from pathlib import Path
+import csv
 
-```python
+
 def read_text(path: str | Path, encoding: str = "utf-8") -> str:
-    p = Path(path)
+    """
+    Читает текстовый файл и возвращает его содержимое одной строкой.
+
+    Для другой кодировки можно передать, например, encoding="cp1251".
+    """
+    p = Path(path) # превращаем путь в объект Path, чтобы строка и path работали одинаково.
     return p.read_text(encoding=encoding)
+
 ```
 
-Вывод
+### write_csv()
+```py
+def write_csv(rows: Iterable[Sequence], path: str | Path,
+              header: tuple[str, ...] | None = None) -> None:
+    """
+    Создаёт или перезаписывает CSV-файл (разделитель — запятая).
+    rows   — строки данных; все строки должны иметь одинаковую длину.
+    header — необязательный заголовок, пишется первой строкой.
+    Если rows пуст и header=None, создаётся пустой файл.
+    """
+    # Превращаем rows в список списков: нужно проверить длины и пройти по данным дважды
+    rows = [list(row) for row in rows]
 
-![alt text](../../images/lab04/read_text.png)
+    if rows:
+        # Запоминаем длину первой строки как эталон
+        width = len(rows[0])
+        for row in rows:
+            # Если длина строки не совпадает с эталоном — останавливаемся с понятной ошибкой
+            if len(row) != width:
+                raise ValueError("Все строки CSV должны иметь одинаковую длину.")
+        # Заголовок тоже должен совпадать по длине со строками данных
+        if header is not None and len(header) != width:
+            raise ValueError("Длина заголовка не совпадает с длиной строк.")
 
-### Ensure_parent_dir
+    # Создаём папку для файла, если её ещё нет
+    ensure_parent_dir(path)
+    # newline="" — отключает автоматическую замену перевода строки;
+    with Path(path).open("w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        # Если заголовок задан — пишем его первой строкой
+        if header is not None:
+            writer.writerow(header)
+        # writerows записывает все строки данных по очереди
+        writer.writerows(rows)
+```
 
-Создаёт родительские папки для файла (если их нет). Вызывается
-изнутри `write_csv`, чтобы не падало `open()`.
-
-```python
+### ensure_parent_dir()
+```py
 def ensure_parent_dir(path: str | Path) -> None:
+    """Создаёт родительские папки для файла, если их нет."""
+    # Path(path).parent — папка, в которой лежит файл
+    # mkdir(parents=True) — создать всю цепочку папок, если её нет
+    # exist_ok=True — не падать, если папка уже существует
     Path(path).parent.mkdir(parents=True, exist_ok=True)
 ```
 
-Вывод
 
-![alt text](../../images/lab04/ensure_parent_dir.png)
-
-### Write_csv
-
-Пишет список строк в CSV через `csv.writer` с разделителем «,»,
-кодировка UTF-8, файл перезаписывается. Если передан `header` —
-пишется первой строкой. Проверяет **одинаковую ширину** всех
-строк (эталон — длина `header`, если он есть, иначе — первой
-строки). При нарушении — `ValueError`.
-
-```python
-def write_csv(rows, path, header=None) -> None:
-    rows = list(rows)
-    p = Path(path)
-    if header is not None:
-        length = len(header)
-    elif rows:
-        length = len(rows[0])
-    else:
-        length = None
-    if length is not None:
-        for i, row in enumerate(rows):
-            if len(row) != length:
-                raise ValueError(f"Строка {i} имеет длину {len(row)}, "
-                                 f"ожидалась {length}")
-    ensure_parent_dir(path)
-    with p.open("w", newline="", encoding="utf-8") as f:
-        w = csv.writer(f)
-        if header is not None:
-            w.writerow(header)
-        for r in rows:
-            w.writerow(r)
-```
-
-Вывод
-
-![alt text](../../images/lab04/write_csv.png)
-
-### Проверка через assert
-
-```python
+### Запуск - data/lab04/input.py
+```py
 from src.lab04.io_txt_csv import read_text, write_csv
 
-# чтение пустого файла → ""
-Path("data/lab04/empty.txt").write_text("", encoding="utf-8")
-assert read_text("data/lab04/empty.txt") == ""
-
-# обычная запись с заголовком
-write_csv([("test", 3)], "data/lab04/check.csv", header=("word", "count"))
-assert Path("data/lab04/check.csv").read_text(encoding="utf-8") == \
-    "word,count\ntest,3\n"
-
-# пустой rows + header → только заголовок
-write_csv([], "data/lab04/check.csv", header=("word", "count"))
-assert Path("data/lab04/check.csv").read_text(encoding="utf-8") == \
-    "word,count\n"
-
-# пустой rows + header=None → пустой файл
-write_csv([], "data/lab04/check.csv")
-assert Path("data/lab04/check.csv").read_text(encoding="utf-8") == ""
-
-# разная длина строк → ValueError
-try:
-    write_csv([("a", 1), ("b", 2, 3)], "data/lab04/check.csv")
-    raise AssertionError("ожидали ValueError")
-except ValueError:
-    pass
-
-# несовпадение ширины с header → ValueError
-try:
-    write_csv([("a", "b")], "data/lab04/check.csv", header=("x", "y", "z"))
-    raise AssertionError("ожидали ValueError")
-except ValueError:
-    pass
-
-print("Все проверки пройдены!")
+txt = read_text("data/lab04/input.txt")  # читаем файл один раз
+write_csv([("word","count"),("test",3)], "data/lab04/check.csv")  # создаст CSV
+print(repr(txt)) # repr покажет текст вместе с кавычками и служебными символами
+# repr покажет лишние пробелы и переносы строк, которые иначе не видны.
 ```
+Вывод:
+![alt text](../../images/lab04/input.png)
 
-Вывод
-
-![alt text](../../images/lab04/proverka_io.png)
-
-## Задание В — скрипт `src/lab04/text_report.py`
-
-Скрипт:
-1. читает `data/lab04/input.txt` (путь можно задать флагом `--in`);
-2. нормализует и токенизирует (функции из ЛР3);
-3. считает частоты и пишет `report.csv` с колонками `word,count`,
-   отсортированный по `count ↓, word ↑`;
-4. печатает в консоль: всего слов, уникальных слов, топ-5.
-
-Код функции одного файла:
-
-```python
-def text_report(input_path, output_path, encoding="utf-8") -> None:
-    tokens = read_and_tokenize(input_path, encoding=encoding)
-    freq = count_freq(tokens)
-    rows = sorted_word_counts(freq)
-    write_csv(rows, output_path, header=("word", "count"))
-
-    print(f"Всего слов: {len(tokens)}")
-    print(f"Уникальных слов: {len(freq)}")
-    print("Топ-5:")
-    for word, count in top_n(freq, n=5):
-        print(f"{word}:{count}")
-```
-
-Пример запуска:
-
-```bash
-python -m src.lab04.text_report
-python -m src.lab04.text_report --in data/lab04/input.txt \
-                                --out data/lab04/report.csv
-```
-
-Пример `report.csv`:
-
-```
+Содержимое check.csv:
+```py
 word,count
-привет,2
-мир,1
-```
-
-Вывод
-
-![alt text](../../images/lab04/report_one.png)
-
-## Тест-кейсы A / B / C
-
-### A. Обычный вход
-
-`data/lab04/input.txt`:
-
-```
-Привет, мир! Привет!!!
-```
-
-Запуск:
-
-```bash
-python -m src.lab04.text_report
-```
-
-Ожидание в консоли:
-
-```
-Всего слов: 3
-Уникальных слов: 2
-Топ-5:
-привет:2
-мир:1
-```
-
-`report.csv`:
-
-```
-word,count
-привет,2
-мир,1
-```
-
-### B. Пустой вход
-
-`data/lab04/input.txt` пустой → `report.csv` содержит **только
-заголовок** `word,count` (такая политика выбрана осознанно — так
-файл удобнее парсить; альтернатива «пустой файл» отвергнута).
-
-### C. Кодировка cp1251
-
-Создаём файл в cp1251:
-
-```python
-open("data/lab04/input.txt", "w", encoding="cp1251").write("Привет")
-```
-
-Запуск:
-
-```bash
-python -m src.lab04.text_report --encoding cp1251
-```
-
-Ожидание: чтение успешно, `report.csv` = `word,count / привет,1`.
-Если забыть `--encoding`, скрипт печатает в stderr подсказку
-«Попробуйте --encoding cp1251» и завершается с кодом 1.
-
-Вывод
-
-![alt text](../../images/lab04/report_cp1251.png)
-
-## Задание ★ — несколько файлов
-
-Флаг `--in` принимает несколько путей. Флаги `--per-file` и
-`--total` включают многфайловый режим и указываются **вместе**:
-
-* `--per-file` — CSV со столбцами `file,word,count`, сортировка
-  `file ↑, count ↓, word ↑`;
-* `--total` — сводный CSV `word,count`, сортировка `count ↓, word ↑`.
-
-Запуск:
-
-```bash
-python -m src.lab04.text_report \
-    --in data/lab04/a.txt data/lab04/b.txt \
-    --per-file data/lab04/report_per_file.csv \
-    --total    data/lab04/report_total.csv
-```
-
-Вход:
-
-* `a.txt`: `Привет мир`
-* `b.txt`: `Привет, привет!`
-
-`report_per_file.csv`:
-
-```
-file,word,count
-a.txt,мир,1
-a.txt,привет,1
-b.txt,привет,2
-```
-
-`report_total.csv`:
-
-```
-word,count
-привет,3
-мир,1
-```
-
-Вывод
-
-![alt text](../../images/lab04/report_multi.png)
-
-## Политика по кодировкам и ошибкам
-
-* **По умолчанию UTF-8.** Для другой кодировки — флаг
-  `--encoding cp1251` (или `read_text(path, encoding="cp1251")`).
-* **Файл не найден:** печатаем `Ошибка: файл не найден: <path>`
-  в `stderr`, код возврата 1.
-* **Ошибка декодирования:** печатаем подсказку про `--encoding`,
-  код возврата 1.
-* **Пустой вход:** `report.csv` содержит только заголовок.
-* **Большие файлы:** по ТЗ читаем целиком; в реальном проекте
-  стоит читать построчно — это отмечено в коде `read_text`.
-
-## Структура проекта
-
-```
-src/
-  lab04/
-    __init__.py
-    io_txt_csv.py       # Задание A (I/O слой)
-    text_report.py      # Задание B + ★ (логика + CLI)
-  lib/
-    text.py             # функции из ЛР3
-data/
-  lab04/
-    input.txt
-    a.txt
-    b.txt
-    report.csv
-    report_per_file.csv
-    report_total.csv
-images/
-  lab04/
-    read_text.png
-    write_csv.png
-    ...
+test,3
 ```
