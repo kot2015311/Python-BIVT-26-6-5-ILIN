@@ -23,7 +23,7 @@ def sorted_word_counts(freq: dict[str, int]) -> list[tuple[str, int]]:
 def main() -> None:
     """Главная функция: разбирает аргументы, запускает логику, пишет отчёт."""
     # 1. Настраиваем парсер аргументов командной строки
-    parser = argparse.ArgumentParser(description="Частотный отчёт по словам (ЛР4)")
+    parser = argparse.ArgumentParser(description="Частотный отчёт по словам (ЛР4)") #ArgumentParser создаёт «описание» программы, какие аргументы она принимает.
     
     # Аргумент --in: путь к входному файлу. Если не указан, берется data/lab04/input.txt
     parser.add_argument("--in", dest="input_file", default="data/lab04/input.txt", help="Путь к входному файлу")
@@ -42,7 +42,7 @@ def main() -> None:
         # Получаем список слов из файла (вызываем нашу функцию)
         tokens = read_and_tokenize(args.input_file, encoding=args.encoding)
     except FileNotFoundError as e:
-        # Если файл не найден, печатаем ошибку в поток ошибок (stderr) и выходим с кодом 1
+        # Если файл не найден, печатаем ошибку в поток ошибок (stderr) и выходим
         print(f"Ошибка: файл не найден: {e.filename}", file=sys.stderr)
         sys.exit(1)
     except UnicodeDecodeError:
@@ -50,13 +50,13 @@ def main() -> None:
         print(f"Ошибка кодировки. Попробуйте добавить --encoding cp1251", file=sys.stderr)
         sys.exit(1)
 
-    # 3. Считаем частоты слов (функция из ЛР3)
+    # 3. Считаем частоты слов
     freq = count_freq(tokens)  # Получаем словарь вида {"привет": 2, "мир": 1}
 
-    # 4. Сортируем словарь по правилу: count ↓, word ↑
+    # 4. Сортируем словарь по правилу: count , word 
     sorted_rows = sorted_word_counts(freq)
 
-    # 5. Сохраняем результат в CSV-файл (функция из Задания А)
+    # 5. Сохраняем результат в CSV-файл
     # Передаем заголовок ("word", "count"). Если слов нет, файл будет содержать только заголовок.
     write_csv(sorted_rows, args.output_file, header=("word", "count"))
 
