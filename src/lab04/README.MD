@@ -12,18 +12,20 @@ tokenize, count_freq, top_n) к реальным файлам.
 
 ### read_text()
 ```py
-from pathlib import Path
-import csv
+import csv                                  # стандартный модуль для работы с CSV
+from pathlib import Path                    # удобная работа с путями к файлам
+from typing import Iterable, Sequence       # типы: Iterable — любой итерируемый объект, Sequence — список/кортеж
 
 
 def read_text(path: str | Path, encoding: str = "utf-8") -> str:
     """
     Читает текстовый файл и возвращает его содержимое одной строкой.
-
-    Для другой кодировки можно передать, например, encoding="cp1251".
+    FileNotFoundError и UnicodeDecodeError не перехватываются, пусть всплывают.
+    Другую кодировку можно указать явно, например: encoding="cp1251".
     """
-    p = Path(path) # превращаем путь в объект Path, чтобы строка и path работали одинаково.
-    return p.read_text(encoding=encoding)
+    # Path(path) — превращает строку или Path в объект Path
+    # read_text(encoding=...) — открывает файл, читает всё содержимое и закрывает его
+    return Path(path).read_text(encoding=encoding)
 
 ```
 
@@ -79,7 +81,7 @@ def ensure_parent_dir(path: str | Path) -> None:
 from src.lab04.io_txt_csv import read_text, write_csv
 
 txt = read_text("data/lab04/input.txt")  # читаем файл один раз
-write_csv([("word","count"),("test",3)], "data/lab04/check.csv")  # создаст CSV
+write_csv([("test",3)], "data/lab04/check.csv", header=("word","count"))  # создаст CSV, заголовок передаём через header
 print(repr(txt)) # repr покажет текст вместе с кавычками и служебными символами
 # repr покажет лишние пробелы и переносы строк, которые иначе не видны.
 ```
@@ -124,8 +126,8 @@ def main() -> None:
     # Аргумент --in: путь к входному файлу. Если не указан, берется data/lab04/input.txt
     parser.add_argument("--in", dest="input_file", default="data/lab04/input.txt", help="Путь к входному файлу")
     
-    # Аргумент --out: путь к выходному CSV. По умолчанию data/report.csv
-    parser.add_argument("--out", dest="output_file", default="data/report.csv", help="Путь к выходному CSV")
+    # Аргумент --out: путь к выходному CSV. По умолчанию data/lab04/report.csv
+    parser.add_argument("--out", dest="output_file", default="data/lab04/report.csv", help="Путь к выходному CSV")
     
     # Аргумент --encoding: кодировка файла. По умолчанию utf-8
     parser.add_argument("--encoding", default="utf-8", help="Кодировка файла (например, cp1251)")
