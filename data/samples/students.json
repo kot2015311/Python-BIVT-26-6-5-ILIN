@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Артём",
+    "group": "БИВТ-26-6",
+    "skills": [
+      "Python",
+      "Git"
+    ]
+  },
+  {
+    "name": "Алиса",
+    "group": "БИВТ-26-6",
+    "email": "alice@example.com"
+  },
+  {
+    "name": "Борис",
+    "skills": [
+      "C++"
+    ],
+    "group": "БИВТ-26-5"
+  }
+]

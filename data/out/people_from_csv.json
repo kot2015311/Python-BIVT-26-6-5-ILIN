@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Артём",
+    "age": "18",
+    "city": "Москва",
+    "email": "artem@example.com"
+  },
+  {
+    "name": "Алиса",
+    "age": "19",
+    "city": "Санкт-Петербург",
+    "email": "alice@example.com"
+  },
+  {
+    "name": "Борис",
+    "age": "20",
+    "city": "Казань",
+    "email": "boris@example.com"
+  },
+  {
+    "name": "Мария",
+    "age": "18",
+    "city": "Новосибирск",
+    "email": "maria@example.com"
+  },
+  {
+    "name": "Иван",
+    "age": "21",
+    "city": "Екатеринбург",
+    "email": "ivan@example.com"
+  }
+]
