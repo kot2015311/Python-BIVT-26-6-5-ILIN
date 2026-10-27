@@ -1,6 +1,6 @@
-name,age,city,email
-Артём,18,Москва,artem@example.com
-Алиса,19,Санкт-Петербург,alice@example.com
-Борис,20,Казань,boris@example.com
-Мария,18,Новосибирск,maria@example.com
-Иван,21,Екатеринбург,ivan@example.com
+name,age,city
+Alice,22,SPB
+Bob,25,Moscow
+Carlos,30,Kazan
+Dana,21,SPB
+Andrey,27,Novosibirsk

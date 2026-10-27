@@ -1,32 +1,27 @@
 [
   {
-    "name": "Артём",
-    "age": "18",
-    "city": "Москва",
-    "email": "artem@example.com"
+    "name": "Alice",
+    "age": "22",
+    "city": "SPB"
   },
   {
-    "name": "Алиса",
-    "age": "19",
-    "city": "Санкт-Петербург",
-    "email": "alice@example.com"
+    "name": "Bob",
+    "age": "25",
+    "city": "Moscow"
   },
   {
-    "name": "Борис",
-    "age": "20",
-    "city": "Казань",
-    "email": "boris@example.com"
+    "name": "Carlos",
+    "age": "30",
+    "city": "Kazan"
   },
   {
-    "name": "Мария",
-    "age": "18",
-    "city": "Новосибирск",
-    "email": "maria@example.com"
-  },
-  {
-    "name": "Иван",
+    "name": "Dana",
     "age": "21",
-    "city": "Екатеринбург",
-    "email": "ivan@example.com"
+    "city": "SPB"
+  },
+  {
+    "name": "Andrey",
+    "age": "27",
+    "city": "Novosibirsk"
   }
 ]

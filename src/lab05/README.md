@@ -26,7 +26,7 @@ src/lab05/csv_xlsx.py        # задание B: csv_to_xlsx
 src/lab05/run.py             # сценарии демонстрации
 src/lab05/proverka.py        # assert-проверки
 src/lab05/oshibki.py         # демонстрация ошибок
-data/samples/                # входные файлы: people.json, people.csv, cities.csv, students.json
+data/samples/                # входные файлы: people.json, people.csv, cities.csv (наборы из репозитория курса), students.json (свой пример)
 data/samples/errors/         # файлы с ошибками для проверок
 data/out/                    # результаты конвертаций
 ```
@@ -36,12 +36,13 @@ data/out/                    # результаты конвертаций
 - **Порядок колонок в JSON → CSV** — как в первом объекте. Если в следующих объектах есть новые ключи, они добавляются в конец (пример — `students.json`).
 - Отсутствующие поля заполняются пустой строкой (`restval=""`).
 - Вложенные списки и словари в JSON → CSV записываются JSON-строкой: `["Python", "Git"]`.
-- **CSV → JSON**: значения сохраняются строками (`"age": "18"`), в CSV нет типов.
+- **CSV → JSON**: значения сохраняются строками (`"age": "22"`), в CSV нет типов.
 - **CSV → XLSX**: значения тоже записываются как текст, заголовок — жирный, лист `Sheet1`.
 - Ширина колонки = длина самого длинного текста + 2, но не меньше 8.
 - Пустой файл, файл только с заголовком, пустой JSON `[]`, не-словари в списке, битый JSON, строки разной длины → `ValueError`.
 - Нет входного файла → `FileNotFoundError`. Неверное расширение входа или выхода → `ValueError`.
-- Кодировка везде строго UTF-8. В ТЗ модуль назван и `cvs_xlsx.py`, и `csv_xlsx.py` — выбрано `csv_xlsx.py`.
+- Разделитель CSV — запятая; файлы с `;` не поддерживаются.
+- Кодировка везде строго UTF-8 (CSV читается как `utf-8-sig`: это UTF-8, которая отрезает метку BOM у файлов из Excel). В ТЗ модуль назван и `cvs_xlsx.py`, и `csv_xlsx.py` — выбрано `csv_xlsx.py`.
 
 ## Общий помощник — `src/lib/io_helpers.py`
 ```py
@@ -146,13 +147,15 @@ def csv_to_json(csv_path: str | Path, json_path: str | Path) -> None:
     src = check_path(csv_path, ".csv", must_exist=True)
     dst = check_path(json_path, ".json", must_exist=False)
 
-    with src.open(encoding="utf-8", newline="") as f:
+    # utf-8-sig — та же UTF-8, но отрезает метку BOM, которую ставит Excel
+    with src.open(encoding="utf-8-sig", newline="") as f:
         # DictReader берёт первую строку как заголовок и отдаёт остальные строки словарями
         reader = csv.DictReader(f)
 
-        # fieldnames — это заголовок; у пустого файла его нет, тогда там None
+        # fieldnames — это заголовок: у пустого файла там None, а если первая строка пустая — []
         header = reader.fieldnames
-        if header is None:
+        # not header ловит оба случая: и None, и пустой список считаются ложью
+        if not header:
             raise ValueError("Пустой CSV: нет заголовка")
 
         # Пустое имя колонки (например, "name,,city") — заголовок испорчен
@@ -212,7 +215,8 @@ def csv_to_xlsx(csv_path: str | Path, xlsx_path: str | Path) -> None:
     src = check_path(csv_path, ".csv", must_exist=True)
     dst = check_path(xlsx_path, ".xlsx", must_exist=False)
 
-    with src.open(encoding="utf-8", newline="") as f:
+    # utf-8-sig — та же UTF-8, но отрезает метку BOM, которую ставит Excel
+    with src.open(encoding="utf-8-sig", newline="") as f:
         # csv.reader отдаёт каждую строку списком; пустые строки ([]) пропускаем
         rows = [row for row in csv.reader(f) if row]
 
@@ -243,7 +247,7 @@ def csv_to_xlsx(csv_path: str | Path, xlsx_path: str | Path) -> None:
     for row in rows:
         ws.append(row)
 
-    # ws[1] — первая строка листа (в Excel строки считаются с 1), делаем её жирной
+    # ws[1] — первая строка листа, делаем её жирной
     # Шрифт указываем явно: Font(bold=True) без name сбрасывает Calibri на шрифт по умолчанию
     for cell in ws[1]:
         cell.font = Font(name="Calibri", size=11, bold=True)
@@ -324,12 +328,12 @@ for path in ("data/out/people.xlsx", "data/out/cities.xlsx"):
 ### 1. JSON → CSV: заголовок и количество строк
 `data/samples/people.json` (5 объектов) → `data/out/people_from_json.csv`:
 ```
-name,age,city,email
-Артём,18,Москва,artem@example.com
-Алиса,19,Санкт-Петербург,alice@example.com
-Борис,20,Казань,boris@example.com
-Мария,18,Новосибирск,maria@example.com
-Иван,21,Екатеринбург,ivan@example.com
+name,age,city
+Alice,22,SPB
+Bob,25,Moscow
+Carlos,30,Kazan
+Dana,21,SPB
+Andrey,27,Novosibirsk
 ```
 Объекты с разными ключами и вложенным списком (`data/samples/students.json`) → `data/out/students_from_json.csv`:
 ```
@@ -344,16 +348,14 @@ name,group,skills,email
 ```json
 [
   {
-    "name": "Артём",
-    "age": "18",
-    "city": "Москва",
-    "email": "artem@example.com"
+    "name": "Alice",
+    "age": "22",
+    "city": "SPB"
   },
   {
-    "name": "Алиса",
-    "age": "19",
-    "city": "Санкт-Петербург",
-    "email": "alice@example.com"
+    "name": "Bob",
+    "age": "25",
+    "city": "Moscow"
   },
   {
   ...
@@ -369,7 +371,7 @@ name,group,skills,email
 
 ![alt text](../../images/lab05/cities_xlsx.png)
 
-Лист называется `Sheet1`, заголовок жирный. Короткие колонки `name` и `age` получили минимальную ширину 8, `region` — 35 (длина самого длинного региона + 2).
+Лист называется `Sheet1`, заголовок жирный. Короткие колонки `name` и `age` получили минимальную ширину 8, `city` в cities.xlsx — 15 (`Yekaterinburg` 13 + 2), `population` — 12 (длина заголовка 10 + 2).
 
 ## Проверка через assert — `src/lab05/proverka.py`
 ```py
@@ -400,9 +402,9 @@ json_to_csv("data/samples/people.json", f"{OUT}/people.csv")
 with open(f"{OUT}/people.csv", encoding="utf-8", newline="") as f:
     reader = csv.DictReader(f)
     rows = list(reader)
-assert reader.fieldnames == ["name", "age", "city", "email"], "Ошибка в json_to_csv (порядок колонок)"
+assert reader.fieldnames == ["name", "age", "city"], "Ошибка в json_to_csv (порядок колонок)"
 assert len(rows) == 5, "Ошибка в json_to_csv (количество строк)"
-assert rows[0]["name"] == "Артём" and rows[0]["age"] == "18", "Ошибка в json_to_csv (значения)"
+assert rows[0]["name"] == "Alice" and rows[0]["age"] == "22", "Ошибка в json_to_csv (значения)"
 
 json_to_csv("data/samples/students.json", f"{OUT}/students.csv")
 with open(f"{OUT}/students.csv", encoding="utf-8", newline="") as f:
@@ -417,8 +419,8 @@ csv_to_json("data/samples/people.csv", f"{OUT}/people.json")
 with open(f"{OUT}/people.json", encoding="utf-8") as f:
     data = json.load(f)
 assert len(data) == 5, "Ошибка в csv_to_json (количество объектов)"
-assert list(data[0].keys()) == ["name", "age", "city", "email"], "Ошибка в csv_to_json (ключи)"
-assert data[0]["age"] == "18", "Ошибка в csv_to_json (значения должны быть строками)"
+assert list(data[0].keys()) == ["name", "age", "city"], "Ошибка в csv_to_json (ключи)"
+assert data[0]["age"] == "22", "Ошибка в csv_to_json (значения должны быть строками)"
 
 # Туда и обратно: JSON -> CSV -> JSON даёт те же записи (возраст стал строкой)
 csv_to_json(f"{OUT}/people.csv", f"{OUT}/round.json")
@@ -434,7 +436,7 @@ ws = load_workbook(f"{OUT}/cities.xlsx").active
 assert ws.title == "Sheet1", "Ошибка в csv_to_xlsx (имя листа)"
 assert ws.max_row == 6, "Ошибка в csv_to_xlsx (количество строк: заголовок + 5)"
 assert ws["A1"].value == "city" and ws["A1"].font.bold, "Ошибка в csv_to_xlsx (заголовок)"
-assert ws.column_dimensions["C"].width == 9, "Ошибка в csv_to_xlsx (ширина: len('founded') + 2 = 9)"
+assert ws.column_dimensions["C"].width == 12, "Ошибка в csv_to_xlsx (ширина: len('population') + 2 = 12)"
 assert ws.column_dimensions["A"].width >= 8, "Ошибка в csv_to_xlsx (ширина не меньше 8)"
 
 # ---------- Ошибки ----------

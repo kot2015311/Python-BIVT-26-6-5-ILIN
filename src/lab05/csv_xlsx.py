@@ -22,7 +22,8 @@ def csv_to_xlsx(csv_path: str | Path, xlsx_path: str | Path) -> None:
     src = check_path(csv_path, ".csv", must_exist=True)
     dst = check_path(xlsx_path, ".xlsx", must_exist=False)
 
-    with src.open(encoding="utf-8", newline="") as f:
+    # utf-8-sig — та же UTF-8, но отрезает метку BOM, которую ставит Excel
+    with src.open(encoding="utf-8-sig", newline="") as f:
         # csv.reader отдаёт каждую строку списком; пустые строки ([]) пропускаем
         rows = [row for row in csv.reader(f) if row]
 
@@ -53,7 +54,7 @@ def csv_to_xlsx(csv_path: str | Path, xlsx_path: str | Path) -> None:
     for row in rows:
         ws.append(row)
 
-    # ws[1] — первая строка листа (в Excel строки считаются с 1), делаем её жирной
+    # ws[1] — первая строка листа, делаем её жирной
     # Шрифт указываем явно: Font(bold=True) без name сбрасывает Calibri на шрифт по умолчанию
     for cell in ws[1]:
         cell.font = Font(name="Calibri", size=11, bold=True)

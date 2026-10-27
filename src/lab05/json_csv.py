@@ -55,7 +55,6 @@ def json_to_csv(json_path: str | Path, csv_path: str | Path) -> None:
 
     # Создаём папку для файла, если её ещё нет
     ensure_parent_dir(dst)
-    # newline="" — чтобы на Windows не появлялись пустые строки между записями
     with dst.open("w", newline="", encoding="utf-8") as f:
         # DictWriter пишет словари; restval="" — чем заполнить поле, которого нет в словаре
         writer = csv.DictWriter(f, fieldnames=fieldnames, restval="")
@@ -73,13 +72,15 @@ def csv_to_json(csv_path: str | Path, json_path: str | Path) -> None:
     src = check_path(csv_path, ".csv", must_exist=True)
     dst = check_path(json_path, ".json", must_exist=False)
 
-    with src.open(encoding="utf-8", newline="") as f:
+    # utf-8-sig — та же UTF-8, но отрезает метку BOM, которую ставит Excel
+    with src.open(encoding="utf-8-sig", newline="") as f:
         # DictReader берёт первую строку как заголовок и отдаёт остальные строки словарями
         reader = csv.DictReader(f)
 
-        # fieldnames — это заголовок; у пустого файла его нет, тогда там None
+        # fieldnames — это заголовок: у пустого файла там None, а если первая строка пустая — []
         header = reader.fieldnames
-        if header is None:
+        # not header ловит оба случая: и None, и пустой список считаются ложью
+        if not header:
             raise ValueError("Пустой CSV: нет заголовка")
 
         # Пустое имя колонки (например, "name,,city") — заголовок испорчен
@@ -108,6 +109,6 @@ def csv_to_json(csv_path: str | Path, json_path: str | Path) -> None:
 
     ensure_parent_dir(dst)
     with dst.open("w", encoding="utf-8") as f:
-        # ensure_ascii=False — русские буквы как есть, а не А...
+        # ensure_ascii=False — русские буквы как есть
         # indent=2 — каждый ключ с новой строки с отступом в 2 пробела
         json.dump(rows, f, ensure_ascii=False, indent=2)
