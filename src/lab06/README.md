@@ -15,12 +15,14 @@ python -m src.lab06.cli_convert    # конвертеры данных
 
 ## Структура 
 
+```text
 src/lab06/cli_text.py        # задание 1: cat, stats (с использованием функций ЛР3)
 src/lab06/cli_convert.py     # задание 2: json2csv, csv2json, csv2xlsx (функции ЛР5)
 src/lab06/__init__.py        # файл для обозначения пакета
 data/samples/                # входные файлы (people.json, people.csv, text.txt и др.)
 data/out/lab06/              # результаты работы конвертеров
 images/lab06/                # скриншоты работы программ
+```
 
 ## Задание 1 — Модуль src/lab06/cli_text.py
 
